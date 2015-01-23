@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTokAndroid", "OpenTokAndroid\OpenTokAndroid.csproj", "{400E9E31-AEBA-4C76-B445-4DC5C85587F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTok.Binding.Android", "..\Bindings\OpenTok.Binding.Android\OpenTok.Binding.Android.csproj", "{FC1E2995-AE70-43AC-A2C6-395182B5AD58}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{400E9E31-AEBA-4C76-B445-4DC5C85587F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{400E9E31-AEBA-4C76-B445-4DC5C85587F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{400E9E31-AEBA-4C76-B445-4DC5C85587F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{400E9E31-AEBA-4C76-B445-4DC5C85587F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC1E2995-AE70-43AC-A2C6-395182B5AD58}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC1E2995-AE70-43AC-A2C6-395182B5AD58}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC1E2995-AE70-43AC-A2C6-395182B5AD58}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC1E2995-AE70-43AC-A2C6-395182B5AD58}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

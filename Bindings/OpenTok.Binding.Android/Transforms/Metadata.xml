@@ -1,0 +1,25 @@
+﻿<metadata>
+	<!--
+  This sample removes the class: android.support.v4.content.AsyncTaskLoader.LoadTask:
+  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='AsyncTaskLoader.LoadTask']" />
+  
+  This sample removes the method: android.support.v4.content.CursorLoader.loadInBackground:
+  <remove-node path="/api/package[@name='android.support.v4.content']/class[@name='CursorLoader']/method[@name='loadInBackground']" />
+  -->
+
+  <attr path="/api/package[@name='org.webrtc']/class[@name='StatsReport.Value']" name="managedName">Value1</attr>
+
+  <attr path="/api/package[@name='com.opentok.android']/class[@name='Connection']/method[@name='compareTo' and count(parameter)=1 and parameter[1][@type='com.opentok.android.Connection']]/parameter[1]" name="managedType">Java.Lang.Object</attr>
+  <attr path="/api/package[@name='com.opentok.android']/class[@name='Stream']/method[@name='compareTo' and count(parameter)=1 and parameter[1][@type='com.opentok.android.Stream']]/parameter[1]" name="managedType">Java.Lang.Object</attr>
+
+
+	<!--  The following lines change the namespaces to something more in line with what you would expect using C#-->
+	<attr path="/api/package[@name='com.opentok']" name="managedName">OpenTok</attr>
+	<attr path="/api/package[@name='com.opentok.android']" name="managedName">OpenTok.Android</attr>
+	<attr path="/api/package[@name='com.opentok.client']" name="managedName">OpenTok.Client</attr>
+	<attr path="/api/package[@name='com.opentok.impl']" name="managedName">OpenTok.Impl</attr>
+	<attr path="/api/package[@name='com.opentok.jni']" name="managedName">OpenTok.Jni</attr>
+	<attr path="/api/package[@name='org.webrtc']" name="managedName">WebRTC</attr>
+	<attr path="/api/package[@name='org.webrtc.videoengine']" name="managedName">WebRTC.VideoEngine</attr>
+
+</metadata>
