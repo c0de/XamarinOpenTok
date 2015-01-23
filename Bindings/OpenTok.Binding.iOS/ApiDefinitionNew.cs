@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Drawing;
-
 using ObjCRuntime;
+
 using Foundation;
 using UIKit;
 using AVFoundation;
 using CoreTelephony;
 using CoreFoundation;
 using CoreMedia;
+using SceneKit;
 
 namespace OpenTok.Binding.Ios
 {
 
 	// @interface OTSession : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTSession
+	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTSessionDelegate) }), Protocol]
+	public partial interface OTSession
 	{
-
-		// -(id)initWithApiKey:(NSString *)apiKey sessionId:(NSString *)sessionId delegate:(id<OTSessionDelegate>)delegate;
+				// -(id)initWithApiKey:(NSString *)apiKey sessionId:(NSString *)sessionId delegate:(id<OTSessionDelegate>)delegate;
 		[Export ("initWithApiKey:sessionId:delegate:")]
 		IntPtr Constructor (string apiKey, string sessionId, OTSessionDelegate sessionDelegate);
 
@@ -107,86 +107,58 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTSessionDelegate <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTSessionDelegate
+	public partial interface OTSessionDelegate
 	{
 
 		// @required -(void)sessionDidConnect:(OTSession *)session;
-		[Export ("sessionDidConnect:")]
+		[Export ("sessionDidConnect:"), EventArgs ("OTSessionDelegateSession")]
 		[Abstract]
-		void SessionDidConnect (OTSession session);
+		void DidConnect (OTSession session);
 
 		// @required -(void)sessionDidDisconnect:(OTSession *)session;
-		[Export ("sessionDidDisconnect:")]
+		[Export ("sessionDidDisconnect:"), EventArgs ("OTSessionDelegateSession")]
 		[Abstract]
-		void SessionDidDisconnect (OTSession session);
+		void DidDisconnect (OTSession session);
 
 		// @required -(void)session:(OTSession *)session didFailWithError:(OTError *)error;
-		[Export ("session:didFailWithError:")]
+		[Export ("session:didFailWithError:"), EventArgs ("OTSessionDelegateError")]
 		[Abstract]
 		void DidFailWithError (OTSession session, OTError error);
 
 		// @required -(void)session:(OTSession *)session streamCreated:(OTStream *)stream;
-		[Export ("session:streamCreated:")]
+		[Export ("session:streamCreated:"), EventArgs ("OTSessionDelegateStream")]
 		[Abstract]
 		void StreamCreated (OTSession session, OTStream stream);
 
 		// @required -(void)session:(OTSession *)session streamDestroyed:(OTStream *)stream;
-		[Export ("session:streamDestroyed:")]
+		[Export ("session:streamDestroyed:"), EventArgs ("OTSessionDelegateStream")]
 		[Abstract]
 		void StreamDestroyed (OTSession session, OTStream stream);
 
 		// @optional -(void)session:(OTSession *)session connectionCreated:(OTConnection *)connection;
-		[Export ("session:connectionCreated:")]
+		[Export ("session:connectionCreated:"), EventArgs ("OTSessionDelegateConnection")]
 		void ConnectionCreated (OTSession session, OTConnection connection);
 
 		// @optional -(void)session:(OTSession *)session connectionDestroyed:(OTConnection *)connection;
-		[Export ("session:connectionDestroyed:")]
+		[Export ("session:connectionDestroyed:"), EventArgs ("OTSessionDelegateConnection")]
 		void ConnectionDestroyed (OTSession session, OTConnection connection);
 
 		// @optional -(void)session:(OTSession *)session receivedSignalType:(NSString *)type fromConnection:(OTConnection *)connection withString:(NSString *)string;
-		[Export ("session:receivedSignalType:fromConnection:withString:")]
+		[Export ("session:receivedSignalType:fromConnection:withString:"), EventArgs("OTSessionDelegateSignal")]
 		void ReceivedSignalType (OTSession session, string type, OTConnection connection, string stringParam);
 
 		// @optional -(void)session:(OTSession *)session archiveStartedWithId:(NSString *)archiveId name:(NSString *)name;
-		[Export ("session:archiveStartedWithId:name:")]
-		void ArchiveStartedWithId (OTSession session, string archiveId, string name);
+//		[Export ("session:archiveStartedWithId:name:")]
+//		void ArchiveStartedWithId (OTSession session, string archiveId, string name);
 
 		// @optional -(void)session:(OTSession *)session archiveStoppedWithId:(NSString *)archiveId;
-		[Export ("session:archiveStoppedWithId:")]
-		void ArchiveStoppedWithId (OTSession session, string archiveId);
+//		[Export ("session:archiveStoppedWithId:")]
+//		void ArchiveStoppedWithId (OTSession session, string archiveId);
 	}
 
-	// @protocol OTVideoCapture <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTVideoCapture {
-	//
-	//}
-
-	// @protocol OTVideoRender <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTVideoRender {
-	//
-	//}
-
-	// @protocol OTPublisherKitDelegate <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTPublisherKitDelegate {
-	//
-	//}
-
-	// @protocol OTPublisherKitAudioLevelDelegate <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTPublisherKitAudioLevelDelegate {
-	//
-	//}
-
 	// @interface OTPublisherKit : NSObject
-	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTPublisherKitDelegate) })]
-	interface OTPublisherKit
+	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTPublisherKitDelegate) }), Protocol]
+	public partial interface OTPublisherKit
 	{
 
 		// -(id)initWithDelegate:(id<OTPublisherKitDelegate>)delegate;
@@ -247,7 +219,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTPublisherKitDelegate <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTPublisherKitDelegate
+	public partial interface OTPublisherKitDelegate
 	{
 
 		// @required -(void)publisher:(OTPublisherKit *)publisher didFailWithError:(OTError *)error;
@@ -267,7 +239,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTPublisherKitAudioLevelDelegate <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTPublisherKitAudioLevelDelegate
+	public partial interface OTPublisherKitAudioLevelDelegate
 	{
 
 		// @required -(void)publisher:(OTPublisherKit *)publisher audioLevelUpdated:(float)audioLevel;
@@ -276,30 +248,9 @@ namespace OpenTok.Binding.Ios
 		void AudioLevelUpdated (OTPublisherKit publisher, float audioLevel);
 	}
 
-	// @protocol OTVideoRender <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTVideoRender {
-	//
-	//}
-
-	// @protocol OTSubscriberKitDelegate <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTSubscriberKitDelegate {
-	//
-	//}
-
-	// @protocol OTSubscriberKitAudioLevelDelegate <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTSubscriberKitAudioLevelDelegate {
-	//
-	//}
-
 	// @interface OTSubscriberKit : NSObject
-	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTSubscriberKitDelegate) })]
-	interface OTSubscriberKit
+	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTSubscriberKitDelegate) }), Protocol]
+	public partial interface OTSubscriberKit
 	{
 
 		// -(id)initWithStream:(OTStream *)stream delegate:(id<OTSubscriberKitDelegate>)delegate;
@@ -348,7 +299,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTSubscriberKitDelegate <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTSubscriberKitDelegate
+	public partial interface OTSubscriberKitDelegate
 	{
 
 		// @required -(void)subscriberDidConnectToStream:(OTSubscriberKit *)subscriber;
@@ -379,7 +330,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTSubscriberKitAudioLevelDelegate <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTSubscriberKitAudioLevelDelegate
+	public partial interface OTSubscriberKitAudioLevelDelegate
 	{
 
 		// @required -(void)subscriber:(OTSubscriberKit *)subscriber audioLevelUpdated:(float)audioLevel;
@@ -389,8 +340,8 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTStream : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTStream
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTStream
 	{
 
 		// @property (readonly) OTConnection * connection;
@@ -427,8 +378,8 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTConnection : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTConnection
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTConnection
 	{
 
 		// @property (readonly) NSString * connectionId;
@@ -445,15 +396,15 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTError : NSError
-	[BaseType (typeof(NSError))]
-	interface OTError
+	[BaseType (typeof(NSError)), Protocol]
+	public partial interface OTError
 	{
 
 	}
 
 	// @interface OTVideoFormat : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTVideoFormat
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTVideoFormat
 	{
 
 		// @property (copy, nonatomic) NSString * name;
@@ -494,8 +445,8 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTVideoFrame : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTVideoFrame
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTVideoFrame
 	{
 
 		// -(id)initWithFormat:(OTVideoFormat *)videoFormat;
@@ -530,7 +481,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTVideoCaptureConsumer <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTVideoCaptureConsumer
+	public partial interface OTVideoCaptureConsumer
 	{
 
 		// @required -(void)consumeFrame:(OTVideoFrame *)frame;
@@ -542,7 +493,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTVideoCapture <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTVideoCapture
+	public partial interface OTVideoCapture
 	{
 
 		// @property (assign, atomic) id<OTVideoCaptureConsumer> videoCaptureConsumer;
@@ -583,7 +534,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTVideoRender <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTVideoRender
+	public partial interface OTVideoRender
 	{
 
 		// @required -(void)renderVideoFrame:(OTVideoFrame *)frame;
@@ -592,16 +543,9 @@ namespace OpenTok.Binding.Ios
 		void RenderVideoFrame (OTVideoFrame frame);
 	}
 
-	// @protocol OTAudioDevice <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTAudioDevice {
-	//
-	//}
-
 	// @interface OTAudioDeviceManager : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTAudioDeviceManager
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTAudioDeviceManager
 	{
 
 		// +(void)setAudioDevice:(id<OTAudioDevice>)device;
@@ -614,8 +558,8 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTAudioFormat : NSObject
-	[BaseType (typeof(NSObject))]
-	interface OTAudioFormat
+	[BaseType (typeof(NSObject)), Protocol]
+	public partial interface OTAudioFormat
 	{
 
 		// @property (assign, nonatomic) uint16_t sampleRate;
@@ -630,7 +574,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTAudioBus <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTAudioBus
+	public partial interface OTAudioBus
 	{
 
 		// @required -(void)writeCaptureData:(void *)data numberOfSamples:(uint32_t)count;
@@ -647,7 +591,7 @@ namespace OpenTok.Binding.Ios
 	// @protocol OTAudioDevice <NSObject>
 	[Protocol, Model]
 	[BaseType (typeof(NSObject))]
-	interface OTAudioDevice
+	public partial interface OTAudioDevice
 	{
 
 		// @required -(BOOL)setAudioBus:(id<OTAudioBus>)audioBus;
@@ -736,22 +680,9 @@ namespace OpenTok.Binding.Ios
 		ushort EstimatedCaptureDelay ();
 	}
 
-	// @protocol OTPublisherDelegate <OTPublisherKitDelegate>
-	//[Protocol, Model]
-	//interface OTPublisherDelegate : OTPublisherKitDelegate {
-	//
-	//}
-
-	// @protocol OTPublisherKitDelegate <NSObject>
-	//[Protocol, Model]
-	//[BaseType (typeof (NSObject))]
-	//interface OTPublisherKitDelegate {
-	//
-	//}
-
 	// @interface OTPublisher : OTPublisherKit
-	[BaseType (typeof(OTPublisherKit))]
-	interface OTPublisher
+	[BaseType (typeof(OTPublisherKit)), Protocol]
+	public partial interface OTPublisher
 	{
 
 		// @property (readonly) UIView * view;
@@ -765,7 +696,7 @@ namespace OpenTok.Binding.Ios
 
 	// @protocol OTPublisherDelegate <OTPublisherKitDelegate>
 	[Protocol, Model]
-	interface OTPublisherDelegate : OTPublisherKitDelegate
+	public partial interface OTPublisherDelegate : OTPublisherKitDelegate
 	{
 
 		// @optional -(void)publisher:(OTPublisher *)publisher didChangeCameraPosition:(AVCaptureDevicePosition)position;
@@ -774,8 +705,8 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTSubscriber : OTSubscriberKit
-	[BaseType (typeof(OTSubscriberKit))]
-	interface OTSubscriber
+	[BaseType (typeof(OTSubscriberKit)), Protocol]
+	public partial interface OTSubscriber
 	{
 
 		// @property (readonly) UIView * view;
@@ -785,7 +716,7 @@ namespace OpenTok.Binding.Ios
 
 	// @protocol OTSubscriberDelegate <OTSubscriberKitDelegate>
 	[Protocol, Model]
-	interface OTSubscriberDelegate : OTSubscriberKitDelegate
+	public partial interface OTSubscriberDelegate : OTSubscriberKitDelegate
 	{
 
 		// @required -(void)subscriberVideoDataReceived:(OTSubscriber *)subscriber;

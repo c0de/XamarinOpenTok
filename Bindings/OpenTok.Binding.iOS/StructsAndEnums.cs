@@ -1,9 +1,43 @@
 ﻿namespace OpenTok.Binding.Ios
 {
+	public enum OTSessionErrorCode  {
+		Success = 0,
+		AuthorizationFailure = 1004,
+		ErrorInvalidSession = 1005,
+		ConnectionFailed = 1006,
+		NullOrInvalidParameter = 1011,
+		NotConnected = 1010,
+		IllegalState = 1015,
+		NoMessagingServer = 1503,
+		ConnectionRefused = 1023,
+		StateFailed = 1020,
+		P2PSessionMaxParticipants = 1403,
+		ConnectionTimeout = 1021,
+		InternalError = 2000,
+		InvalidSignalType = 1461,
+		SignalDataTooLong = 1413,
+		ConnectionDropped = 1022,
+		SubscriberNotFound = 1112,
+		PublisherNotFound = 1113
+	}
 
-	//[Native]
-	public enum OTSessionConnectionStatus : int /* nint */
-	{
+	public enum OTPublisherErrorCode {
+		Success = 0,
+		SessionDisconnected = 1010,
+		InternalError = 2000,
+		WebRTCError = 1610
+	}
+
+	public enum OTSubscriberErrorCode {
+		Success = 0,
+		ConnectionTimedOut = 1542,
+		SessionDisconnected = 1541,
+		WebRTCError = 1600,
+		ServerCannotFindStream = 1604,
+		InternalError = 2000
+	}
+
+	public enum OTSessionConnectionStatus {
 		NotConnected,
 		Connected,
 		Connecting,
@@ -11,75 +45,28 @@
 		Failed
 	}
 
-	//[Native]
-	public enum OTSubscriberVideoEventReason : int /* nint */
-	{
-		OTSubscriberVideoEventPublisherPropertyChanged = 1,
-		OTSubscriberVideoEventSubscriberPropertyChanged = 2,
-		OTSubscriberVideoEventQualityChanged = 3
-	}
-
-	//[Native]
-	public enum OTSessionErrorCode : int /* nint */
-	{
-		OTSessionSuccess = 0,
-		OTAuthorizationFailure = 1004,
-		OTErrorInvalidSession = 1005,
-		OTConnectionFailed = 1006,
-		OTNullOrInvalidParameter = 1011,
-		OTNotConnected = 1010,
-		OTSessionIllegalState = 1015,
-		OTNoMessagingServer = 1503,
-		OTConnectionRefused = 1023,
-		OTSessionStateFailed = 1020,
-		OTP2PSessionMaxParticipants = 1403,
-		OTSessionConnectionTimeout = 1021,
-		OTSessionInternalError = 2000,
-		OTSessionInvalidSignalType = 1461,
-		OTSessionSignalDataTooLong = 1413,
-		OTConnectionDropped = 1022,
-		OTSessionSubscriberNotFound = 1112,
-		OTSessionPublisherNotFound = 1113
-	}
-
-	//[Native]
-	public enum OTPublisherErrorCode : int /* nint */
-	{
-		OTPublisherSuccess = 0,
-		OTSessionDisconnected = 1010,
-		OTPublisherInternalError = 2000,
-		OTPublisherWebRTCError = 1610
-	}
-
-	//[Native]
-	public enum OTSubscriberErrorCode : int /* nint */
-	{
-		OTSubscriberSuccess = 0,
-		OTConnectionTimedOut = 1542,
-		OTSubscriberSessionDisconnected = 1541,
-		OTSubscriberWebRTCError = 1600,
-		OTSubscriberServerCannotFindStream = 1604,
-		OTSubscriberInternalError = 2000
-	}
-
-	//[Native]
-	public enum OTVideoOrientation : int /* nint */
-	{
+	public enum OTVideoOrientation {
 		Up = 1,
 		Down = 2,
 		Left = 3,
 		Right = 4
 	}
 
-	//[Native]
-	public enum OTPixelFormat : int /* nint */
-	{
-		I420 = 1228157488
-			/*'I420'*/,
-		ARGB = 1095911234
-			/*'ARGB'*/,
-		NV12 = 1314271538
-			/*'NV12'*/
+	public enum OTPixelFormat {
+		I420 = 1228157488 /* 'I420' */,
+		ARGB = 1095911234 /* 'ARGB' */,
+		NV12 = 1314271538 /* 'NV12' */
+	}
+
+	public enum OTVideoViewType {
+		Subscriber,
+		Publisher
+	}
+
+	public enum OTSubscriberVideoEventReason {
+		PublisherPropertyChanged = 1,
+		SubscriberPropertyChanged = 2,
+		QualityChanged = 3
 	}
 
 }

@@ -34,40 +34,27 @@ namespace OpenTokIOS
 				_this = controller;
 			}
 
-			#region OTSessionDelegate implementation
-
-			public void DidConnect (OTSession session)
+			#region implemented abstract members of OTSessionDelegate
+			public override void DidFailWithError (OTSession session, OTError error)
 			{
+				throw new NotImplementedException ();
 			}
-
-			public void DidDisconnect (OTSession session)
+			public override void DidConnect (OTSession session)
 			{
+				throw new NotImplementedException ();
 			}
-
-			public void DidFailWithError (OTSession session, OTError error)
+			public override void DidDisconnect (OTSession session)
 			{
+				throw new NotImplementedException ();
 			}
-
-			public void StreamCreated (OTSession session, OTStream stream)
+			public override void StreamCreated (OTSession session, OTStream stream)
 			{
+				throw new NotImplementedException ();
 			}
-
-			public void StreamDestroyed (OTSession session, OTStream stream)
+			public override void StreamDestroyed (OTSession session, OTStream stream)
 			{
+				throw new NotImplementedException ();
 			}
-
-			public void ConnectionCreated (OTSession session, OTConnection connection)
-			{
-			}
-
-			public void ConnectionDestroyed (OTSession session, OTConnection connection)
-			{
-			}
-
-			public void ReceivedSignalType (OTSession session, string type, OTConnection connection, string data)
-			{
-			}
-
 			#endregion
 		}
 	}
