@@ -14,7 +14,7 @@ namespace OpenTok.Binding.Ios
 {
 
 	// @interface OTSession : NSObject
-	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTSessionDelegate) }), Protocol]
+	[BaseType (typeof (NSObject), Delegates=new string [] {"WeakDelegate"}, Events=new Type [] { typeof (OTSessionDelegate) }), Protocol]
 	public partial interface OTSession
 	{
 				// -(id)initWithApiKey:(NSString *)apiKey sessionId:(NSString *)sessionId delegate:(id<OTSessionDelegate>)delegate;
@@ -157,7 +157,7 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTPublisherKit : NSObject
-	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTPublisherKitDelegate) }), Protocol]
+	[BaseType (typeof (NSObject), Delegates=new string [] {"WeakDelegate"}, Events=new Type [] { typeof (OTPublisherKitDelegate) }), Protocol]
 	public partial interface OTPublisherKit
 	{
 
@@ -249,7 +249,7 @@ namespace OpenTok.Binding.Ios
 	}
 
 	// @interface OTSubscriberKit : NSObject
-	[BaseType (typeof (NSObject), Delegates=new string [] {"Delegate"}, Events=new Type [] { typeof (OTSubscriberKitDelegate) }), Protocol]
+	[BaseType (typeof (NSObject), Delegates=new string [] {"WeakDelegate"}, Events=new Type [] { typeof (OTSubscriberKitDelegate) }), Protocol]
 	public partial interface OTSubscriberKit
 	{
 
