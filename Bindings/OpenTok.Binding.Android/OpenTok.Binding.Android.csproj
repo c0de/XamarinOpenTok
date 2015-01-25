@@ -56,10 +56,12 @@
     <EmbeddedJar Include="Jars\opentok-android-sdk-2.3.1.jar" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="libs\" />
-    <Folder Include="libs\armeabi\" />
+    <Folder Include="lib\" />
+    <Folder Include="lib\armeabi\" />
+    <Folder Include="lib\x86\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedNativeLibrary Include="libs\armeabi\libopentok.so" />
+    <EmbeddedNativeLibrary Include="lib\armeabi\libopentok.so" />
+    <EmbeddedNativeLibrary Include="lib\x86\libopentok.so" />
   </ItemGroup>
 </Project>
