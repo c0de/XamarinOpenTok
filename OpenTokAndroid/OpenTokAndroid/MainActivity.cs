@@ -20,7 +20,6 @@ namespace OpenTokAndroid
 		Publisher.IPublisherListener,
 		Subscriber.IVideoListener
 	{
-		private static string LOGTAG = "test";
 		private Session mSession;
 		private Publisher mPublisher;
 		private Subscriber mSubscriber;
