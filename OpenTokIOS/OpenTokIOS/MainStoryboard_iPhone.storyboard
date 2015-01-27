@@ -14,16 +14,19 @@
                         <viewControllerLayoutGuide type="bottom" id="8Yh-h8-jIR"/>
                     </layoutGuides>
                     <connections>
-                        <outlet property="SubscriberView" destination="22" id="name-outlet-22"/>
-                        <outlet property="PublisherView" destination="23" id="name-outlet-23"/>
+                        <outlet property="SubscriberView" destination="28" id="name-outlet-28"/>
+                        <outlet property="PublisherView" destination="29" id="name-outlet-29"/>
                     </connections>
-                    <view contentMode="scaleToFill" id="22" translatesAutoresizingMaskIntoConstraints="NO" key="view">
+                    <view contentMode="scaleToFill" id="27" translatesAutoresizingMaskIntoConstraints="NO" key="view">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
                         <subviews>
-                            <view contentMode="scaleToFill" id="23" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO">
-                                <rect key="frame" x="140" y="302" width="160" height="240"/>
+                            <view contentMode="scaleToFill" id="28" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="0.0" y="30" width="160" height="240"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                            </view>
+                            <view contentMode="scaleToFill" id="29" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO">
+                                <rect key="frame" x="124" y="295" width="160" height="240"/>
                             </view>
                         </subviews>
                     </view>

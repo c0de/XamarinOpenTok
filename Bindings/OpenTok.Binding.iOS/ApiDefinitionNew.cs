@@ -65,39 +65,39 @@ namespace OpenTok.Binding.Ios
 
 		// -(void)publish:(OTPublisherKit *)publisher error:(OTError **)error;
 		[Export ("publish:error:")]
-		void Publish (OTPublisherKit publisher, out OTError error);
+		void Publish (OTPublisher publisher, out OTError error);
 
 		// -(void)publish:(OTPublisherKit *)publisher;
 		[Availability (Deprecated = Platform.iOS_Version | Platform.Mac_Version)]
 		[Export ("publish:")]
-		void Publish (OTPublisherKit publisher);
+		void Publish (OTPublisher publisher);
 
 		// -(void)unpublish:(OTPublisherKit *)publisher error:(OTError **)error;
 		[Export ("unpublish:error:")]
-		void Unpublish (OTPublisherKit publisher, out OTError error);
+		void Unpublish (OTPublisher publisher, out OTError error);
 
 		// -(void)unpublish:(OTPublisherKit *)publisher;
 		[Availability (Deprecated = Platform.iOS_Version | Platform.Mac_Version)]
 		[Export ("unpublish:")]
-		void Unpublish (OTPublisherKit publisher);
+		void Unpublish (OTPublisher publisher);
 
 		// -(void)subscribe:(OTSubscriberKit *)subscriber error:(OTError **)error;
 		[Export ("subscribe:error:")]
-		void Subscribe (OTSubscriberKit subscriber, out OTError error);
+		void Subscribe (OTSubscriber subscriber, out OTError error);
 
 		// -(void)subscribe:(OTSubscriberKit *)subscriber;
 		[Availability (Deprecated = Platform.iOS_Version | Platform.Mac_Version)]
 		[Export ("subscribe:")]
-		void Subscribe (OTSubscriberKit subscriber);
+		void Subscribe (OTSubscriber subscriber);
 
 		// -(void)unsubscribe:(OTSubscriberKit *)subscriber error:(OTError **)error;
 		[Export ("unsubscribe:error:")]
-		void Unsubscribe (OTSubscriberKit subscriber, out OTError error);
+		void Unsubscribe (OTSubscriber subscriber, out OTError error);
 
 		// -(void)unsubscribe:(OTSubscriberKit *)subscriber;
 		[Availability (Deprecated = Platform.iOS_Version | Platform.Mac_Version)]
 		[Export ("unsubscribe:")]
-		void Unsubscribe (OTSubscriberKit subscriber);
+		void Unsubscribe (OTSubscriber subscriber);
 
 		// -(void)signalWithType:(NSString *)type string:(NSString *)string connection:(OTConnection *)connection error:(OTError **)error;
 		[Export ("signalWithType:string:connection:error:")]
@@ -158,7 +158,7 @@ namespace OpenTok.Binding.Ios
 
 	// @interface OTPublisherKit : NSObject
 	[BaseType (typeof (NSObject), Delegates=new string [] {"WeakDelegate"}, Events=new Type [] { typeof (OTPublisherKitDelegate) }), Protocol]
-	public partial interface OTPublisherKit
+	public partial interface OTPublisher
 	{
 
 		// -(id)initWithDelegate:(id<OTPublisherKitDelegate>)delegate;
@@ -214,6 +214,14 @@ namespace OpenTok.Binding.Ios
 		// @property (retain, nonatomic) id<OTVideoRender> videoRender;
 		[Export ("videoRender", ArgumentSemantic.Retain)]
 		OTVideoRender VideoRender { get; set; }
+
+		// @property (readonly) UIView * view;
+		[Export ("view")]
+		UIView View { get; }
+
+		// @property (nonatomic) AVCaptureDevicePosition cameraPosition;
+		[Export ("cameraPosition")]
+		AVCaptureDevicePosition CameraPosition { get; set; }
 	}
 
 	// @protocol OTPublisherKitDelegate <NSObject>
@@ -228,11 +236,15 @@ namespace OpenTok.Binding.Ios
 
 		// @optional -(void)publisher:(OTPublisherKit *)publisher streamCreated:(OTStream *)stream;
 		[Export ("publisher:streamCreated:"), EventArgs ("OTPublisherDelegatePublisher")]
-		void StreamCreated (OTPublisherKit publisher, OTStream stream);
+		void StreamCreated (OTPublisher publisher, OTStream stream);
 
 		// @optional -(void)publisher:(OTPublisherKit *)publisher streamDestroyed:(OTStream *)stream;
 		[Export ("publisher:streamDestroyed:"), EventArgs ("OTPublisherDelegatePublisher")]
-		void StreamDestroyed (OTPublisherKit publisher, OTStream stream);
+		void StreamDestroyed (OTPublisher publisher, OTStream stream);
+
+		// @optional -(void)publisher:(OTPublisher *)publisher didChangeCameraPosition:(AVCaptureDevicePosition)position;
+		[Export ("publisher:didChangeCameraPosition:"), EventArgs ("OTPublisherDelegatePosition")]
+		void DidChangeCameraPosition (OTPublisher publisher, AVCaptureDevicePosition position);
 
 	}
 
@@ -245,12 +257,12 @@ namespace OpenTok.Binding.Ios
 		// @required -(void)publisher:(OTPublisherKit *)publisher audioLevelUpdated:(float)audioLevel;
 		[Export ("publisher:audioLevelUpdated:")]
 		[Abstract]
-		void AudioLevelUpdated (OTPublisherKit publisher, float audioLevel);
+		void AudioLevelUpdated (OTPublisher publisher, float audioLevel);
 	}
 
 	// @interface OTSubscriberKit : NSObject
 	[BaseType (typeof (NSObject), Delegates=new string [] {"WeakDelegate"}, Events=new Type [] { typeof (OTSubscriberKitDelegate) }), Protocol]
-	public partial interface OTSubscriberKit
+	public partial interface OTSubscriber
 	{
 
 		// -(id)initWithStream:(OTStream *)stream delegate:(id<OTSubscriberKitDelegate>)delegate;
@@ -294,6 +306,10 @@ namespace OpenTok.Binding.Ios
 		// @property (retain, nonatomic) id<OTVideoRender> videoRender;
 		[Export ("videoRender", ArgumentSemantic.Retain)]
 		OTVideoRender VideoRender { get; set; }
+
+		// @property (readonly) UIView * view;
+		[Export ("view")]
+		UIView View { get; }
 	}
 
 	// @protocol OTSubscriberKitDelegate <NSObject>
@@ -304,27 +320,31 @@ namespace OpenTok.Binding.Ios
 
 		// @required -(void)subscriberDidConnectToStream:(OTSubscriberKit *)subscriber;
 		[Export ("subscriberDidConnectToStream:")]
-		void DidConnectToStream (OTSubscriberKit subscriber);
+		void DidConnectToStream (OTSubscriber subscriber);
 
 		// @required -(void)subscriber:(OTSubscriberKit *)subscriber didFailWithError:(OTError *)error;
 		[Export ("subscriber:didFailWithError:"), EventArgs ("OTSubscriberDelegateError")]
-		void DidFailWithError (OTSubscriberKit subscriber, OTError error);
+		void DidFailWithError (OTSubscriber subscriber, OTError error);
 
 		// @optional -(void)subscriberVideoDisabled:(OTSubscriberKit *)subscriber reason:(OTSubscriberVideoEventReason)reason;
 		[Export ("subscriberVideoDisabled:reason:"), EventArgs ("OTSubscriberDelegateSubscriber")]
-		void VideoDisabled (OTSubscriberKit subscriber, [NullAllowed] OTSubscriberVideoEventReason reason);
+		void VideoDisabled (OTSubscriber subscriber, [NullAllowed] OTSubscriberVideoEventReason reason);
 
 		// @optional -(void)subscriberVideoEnabled:(OTSubscriberKit *)subscriber reason:(OTSubscriberVideoEventReason)reason;
 		[Export ("subscriberVideoEnabled:reason:"), EventArgs ("OTSubscriberDelegateSubscriber")]
-		void VideoEnabled (OTSubscriberKit subscriber, [NullAllowed] OTSubscriberVideoEventReason reason);
+		void VideoEnabled (OTSubscriber subscriber, [NullAllowed] OTSubscriberVideoEventReason reason);
+
+		// @required -(void)subscriberVideoDataReceived:(OTSubscriber *)subscriber;
+		[Export ("subscriberVideoDataReceived:"), EventArgs ("OTSubscriberDelegateSubscriber")]
+		void VideoDataReceived (OTSubscriber subscriber);
 
 		// @optional -(void)subscriberVideoDisableWarning:(OTSubscriberKit *)subscriber;
 		[Export ("subscriberVideoDisableWarning:")]
-		void VideoDisableWarning (OTSubscriberKit subscriber);
+		void VideoDisableWarning (OTSubscriber subscriber);
 
 		// @optional -(void)subscriberVideoDisableWarningLifted:(OTSubscriberKit *)subscriber;
 		[Export ("subscriberVideoDisableWarningLifted:")]
-		void VideoDisableWarningLifted (OTSubscriberKit subscriber);
+		void VideoDisableWarningLifted (OTSubscriber subscriber);
 	}
 
 	// @protocol OTSubscriberKitAudioLevelDelegate <NSObject>
@@ -336,7 +356,7 @@ namespace OpenTok.Binding.Ios
 		// @required -(void)subscriber:(OTSubscriberKit *)subscriber audioLevelUpdated:(float)audioLevel;
 		[Export ("subscriber:audioLevelUpdated:")]
 		[Abstract]
-		void AudioLevelUpdated (OTSubscriberKit subscriber, float audioLevel);
+		void AudioLevelUpdated (OTSubscriber subscriber, float audioLevel);
 	}
 
 	// @interface OTStream : NSObject
@@ -680,47 +700,47 @@ namespace OpenTok.Binding.Ios
 		ushort EstimatedCaptureDelay ();
 	}
 
-	// @interface OTPublisher : OTPublisherKit
-	[BaseType (typeof(OTPublisherKit)), Protocol]
-	public partial interface OTPublisher
-	{
+//	// @interface OTPublisher : OTPublisherKit
+//	[BaseType (typeof(OTPublisherKit)), Protocol]
+//	public partial interface OTPublisher
+//	{
+//
+//		// @property (readonly) UIView * view;
+//		[Export ("view")]
+//		UIView View { get; }
+//
+//		// @property (nonatomic) AVCaptureDevicePosition cameraPosition;
+//		[Export ("cameraPosition")]
+//		AVCaptureDevicePosition CameraPosition { get; set; }
+//	}
 
-		// @property (readonly) UIView * view;
-		[Export ("view")]
-		UIView View { get; }
+//	// @protocol OTPublisherDelegate <OTPublisherKitDelegate>
+//	[Protocol, Model]
+//	public partial interface OTPublisherDelegate : OTPublisherKitDelegate
+//	{
+//
+//		// @optional -(void)publisher:(OTPublisher *)publisher didChangeCameraPosition:(AVCaptureDevicePosition)position;
+//		[Export ("publisher:didChangeCameraPosition:"), EventArgs ("OTPublisherDelegatePosition")]
+//		void DidChangeCameraPosition (OTPublisher publisher, AVCaptureDevicePosition position);
+//	}
 
-		// @property (nonatomic) AVCaptureDevicePosition cameraPosition;
-		[Export ("cameraPosition")]
-		AVCaptureDevicePosition CameraPosition { get; set; }
-	}
+//	// @interface OTSubscriber : OTSubscriberKit
+//	[BaseType (typeof(OTSubscriberKit)), Protocol]
+//	public partial interface OTSubscriber
+//	{
+//
+//		// @property (readonly) UIView * view;
+//		[Export ("view")]
+//		UIView View { get; }
+//	}
 
-	// @protocol OTPublisherDelegate <OTPublisherKitDelegate>
-	[Protocol, Model]
-	public partial interface OTPublisherDelegate : OTPublisherKitDelegate
-	{
-
-		// @optional -(void)publisher:(OTPublisher *)publisher didChangeCameraPosition:(AVCaptureDevicePosition)position;
-		[Export ("publisher:didChangeCameraPosition:"), EventArgs ("OTPublisherDelegatePosition")]
-		void DidChangeCameraPosition (OTPublisher publisher, AVCaptureDevicePosition position);
-	}
-
-	// @interface OTSubscriber : OTSubscriberKit
-	[BaseType (typeof(OTSubscriberKit)), Protocol]
-	public partial interface OTSubscriber
-	{
-
-		// @property (readonly) UIView * view;
-		[Export ("view")]
-		UIView View { get; }
-	}
-
-	// @protocol OTSubscriberDelegate <OTSubscriberKitDelegate>
-	[Protocol, Model]
-	public partial interface OTSubscriberDelegate : OTSubscriberKitDelegate
-	{
-
-		// @required -(void)subscriberVideoDataReceived:(OTSubscriber *)subscriber;
-		[Export ("subscriberVideoDataReceived:"), EventArgs ("OTSubscriberDelegateSubscriber")]
-		void VideoDataReceived (OTSubscriber subscriber);
-	}
+//	// @protocol OTSubscriberDelegate <OTSubscriberKitDelegate>
+//	[Protocol, Model]
+//	public partial interface OTSubscriberDelegate : OTSubscriberKitDelegate
+//	{
+//
+//		// @required -(void)subscriberVideoDataReceived:(OTSubscriber *)subscriber;
+//		[Export ("subscriberVideoDataReceived:"), EventArgs ("OTSubscriberDelegateSubscriber")]
+//		void VideoDataReceived (OTSubscriber subscriber);
+//	}
 }

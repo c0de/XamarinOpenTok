@@ -198,13 +198,13 @@ namespace OpenTokIOS
 				_this = This;
 			}
 
-			public void DidConnectToStream(OTSubscriber subscriber)
+			public override void DidConnectToStream(OTSubscriber subscriber)
 			{
 				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.View.Frame.Width, (float)_this.View.Frame.Height);
 				_this.SubscriberView.AddSubview(_this._subscriber.View);
 			}
 
-			public void DidFailWithError(OTSubscriber subscriber, OTError error)
+			public override void DidFailWithError(OTSubscriber subscriber, OTError error)
 			{
 				var msg = String.Format("SubscriberDelegate:DidFailWithError: Stream {0}, Error: {1}", subscriber.Stream.StreamId, error.Description);
 				_this.RaiseOnError(msg);
@@ -233,7 +233,7 @@ namespace OpenTokIOS
 			}
 
 
-			public void StreamCreated(OTPublisher publisher, OTStream stream)
+			public override void StreamCreated(OTPublisher publisher, OTStream stream)
 			{
 				if (_this._subscriber == null)
 				{
@@ -241,7 +241,7 @@ namespace OpenTokIOS
 				}
 			}
 
-			public void StreamDestroyed(OTPublisher publisher, OTStream stream)
+			public override void StreamDestroyed(OTPublisher publisher, OTStream stream)
 			{
 				_this.CleanupSubscriber();
 				_this.CleanupPublisher();
