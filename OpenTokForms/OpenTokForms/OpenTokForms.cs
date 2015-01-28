@@ -9,6 +9,8 @@ namespace OpenTokForms
 		public App ()
 		{
 			// The root page of your application
+			MainPage = new ConferencePage ();
+			/*
 			MainPage = new ContentPage {
 				Content = new StackLayout {
 					VerticalOptions = LayoutOptions.Center,
@@ -20,6 +22,7 @@ namespace OpenTokForms
 					}
 				}
 			};
+			*/
 		}
 
 		protected override void OnStart ()

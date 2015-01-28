@@ -248,7 +248,7 @@ namespace OpenTokIOS
 			}
 		}
 
-	#endregion PublisherDelegate
+		#endregion PublisherDelegate
 	}
 }
 

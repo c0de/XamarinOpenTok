@@ -143,6 +143,10 @@
   <ItemGroup>
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
+    <Compile Include="..\..\Config.cs">
+      <Link>Config.cs</Link>
+    </Compile>
+    <Compile Include="OpenTokViewRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <ITunesArtwork Include="ITunesArtwork" />
