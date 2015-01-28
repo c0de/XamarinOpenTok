@@ -5,6 +5,8 @@ using Android.OS;
 using Android.Widget;
 using Android.App;
 using OpenTok.Android;
+using Xamarin.Forms.Platform.Android;
+using System.Reflection.Emit;
 
 [assembly: Xamarin.Forms.ExportRenderer (typeof (OpenTokForms.OpenTokView), typeof (OpenTokForms.Droid.OpenTokViewRenderer))]
 namespace OpenTokForms.Droid
@@ -22,8 +24,7 @@ namespace OpenTokForms.Droid
 		private List<Stream> _streams;
 		protected Handler _handler = new Handler();
 
-		private RelativeLayout _publisherViewContainer;
-		private RelativeLayout _subscriberViewContainer;
+		private RelativeLayout _layout;
 
 		protected override void OnElementChanged (Xamarin.Forms.Platform.Android.ElementChangedEventArgs<Xamarin.Forms.View> e)
 		{
@@ -33,10 +34,9 @@ namespace OpenTokForms.Droid
 			_openTokView = e.NewElement as OpenTokView;
 			_streams = new List<Stream>();
 
-			_activity.SetContentView (Resource.Layout.OpenTokView);
+			_layout = new RelativeLayout (this.Context);
 
-			_publisherViewContainer = (RelativeLayout) _activity.FindViewById(Resource.Id.publisherview);
-			_subscriberViewContainer = (RelativeLayout) _activity.FindViewById(Resource.Id.subscriberview);
+			SetNativeControl (_layout);
 
 			SessionConnect();
 		}
@@ -51,8 +51,8 @@ namespace OpenTokForms.Droid
 
 		private void AttachSubscriberView(Subscriber subscriber) {
 			RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams (Resources.DisplayMetrics.WidthPixels, Resources.DisplayMetrics.HeightPixels);
-			_subscriberViewContainer.RemoveView(_subscriber.View);
-			_subscriberViewContainer.AddView(_subscriber.View, layoutParams);
+			_layout.RemoveView(_subscriber.View);
+			_layout.AddView(_subscriber.View, layoutParams);
 			subscriber.SetStyle(BaseVideoRenderer.StyleVideoScale, BaseVideoRenderer.StyleVideoFill);
 		}
 
@@ -63,13 +63,13 @@ namespace OpenTokForms.Droid
 			layoutParams.AddRule(LayoutRules.AlignParentRight, (int)LayoutRules.True);
 			layoutParams.BottomMargin = DpToPx(8);
 			layoutParams.RightMargin = DpToPx(8);
-			_publisherViewContainer.AddView(_publisher.View, layoutParams);
+			_layout.AddView(_publisher.View, layoutParams);
 		}
 
 		private void UnsubscribeFromStream(Stream stream) {
 			_streams.Remove(stream);
 			if (_subscriber.Stream.Equals(stream)) {
-				_subscriberViewContainer.RemoveView(_subscriber.View);
+				_layout.RemoveView(_subscriber.View);
 				_subscriber = null;
 				if (_streams.Count > 0) {
 					SubscribeToStream(_streams.First());
@@ -103,11 +103,11 @@ namespace OpenTokForms.Droid
 		public void OnDisconnected (Session p0)
 		{
 			if (_publisher != null) {
-				_publisherViewContainer.RemoveView(_publisher.View);
+				_layout.RemoveView(_publisher.View);
 			}
 
 			if (_subscriber != null) {
-				_subscriberViewContainer.RemoveView(_subscriber.View);
+				_layout.RemoveView(_subscriber.View);
 			}
 
 			_publisher = null;
