@@ -4,6 +4,8 @@ using System.Drawing;
 using OpenTok.Binding.Ios;
 using Xamarin.Forms.Platform.iOS;
 using UIKit;
+using Foundation;
+using CoreGraphics;
 
 [assembly: Xamarin.Forms.ExportRenderer (typeof (OpenTokForms.OpenTokView), typeof (OpenTokForms.iOS.OpenTokViewRenderer))]
 namespace OpenTokForms.iOS
@@ -15,6 +17,7 @@ namespace OpenTokForms.iOS
 		OTPublisher _publisher;
 		OTSubscriber _subscriber;
 
+		public UIView OTView;
 		public EventHandler<OnErrorEventArgs> OnError;
 
 		protected override void OnElementChanged (Xamarin.Forms.Platform.iOS.ElementChangedEventArgs<Xamarin.Forms.View> e)
@@ -22,6 +25,9 @@ namespace OpenTokForms.iOS
 			base.OnElementChanged (e);
 
 			_openTokView = e.NewElement as OpenTokView;
+			OTView = new UIView (new RectangleF (0, 0, -1, 600));
+
+			SetNativeControl (OTView);
 
 			DoConnect();
 		}
@@ -52,7 +58,15 @@ namespace OpenTokForms.iOS
 			_publisher.View.Layer.CornerRadius = 50;
 			_publisher.View.Layer.MasksToBounds = true;
 
-			this.ViewController.View.AddSubview (_publisher.View);
+			OTView.AddSubview (_publisher.View);
+
+			_publisher.View.TranslatesAutoresizingMaskIntoConstraints = false;
+			OTView.AddConstraints (new NSLayoutConstraint[] {
+				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, OTView, NSLayoutAttribute.Bottom, 1f, 0),
+				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Right, NSLayoutRelation.Equal, OTView, NSLayoutAttribute.Right, 1f, 0),
+				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Height, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, 100),
+				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Width, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, 100)
+			});
 		}
 
 		private void DoSubscribe(OTStream stream)
@@ -182,8 +196,10 @@ namespace OpenTokForms.iOS
 
 			public override void DidConnectToStream(OTSubscriber subscriber)
 			{
-				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.Frame.Width, (float)_this.Frame.Height);
-				_this.ViewController.View.AddSubview(_this._subscriber.View);
+				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.OTView.Frame.Width, (float)_this.OTView.Frame.Height);
+				_this._subscriber.View.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
+				_this.OTView.AddSubview(_this._subscriber.View);
+				_this.OTView.BringSubviewToFront (_this._publisher.View);
 			}
 
 			public override void DidFailWithError(OTSubscriber subscriber, OTError error)
