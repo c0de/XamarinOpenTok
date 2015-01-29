@@ -35,6 +35,8 @@ namespace OpenTokForms.Droid
 			_streams = new List<Stream>();
 
 			_layout = new RelativeLayout (this.Context);
+			_layout.SetMinimumHeight (Resources.DisplayMetrics.HeightPixels);
+			//_layout.SetMinimumWidth (Resources.DisplayMetrics.WidthPixels);
 
 			SetNativeControl (_layout);
 
