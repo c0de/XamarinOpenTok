@@ -3,7 +3,9 @@ using System.Drawing;
 
 using OpenTok.Binding.Ios;
 using Xamarin.Forms.Platform.iOS;
+using UIKit;
 
+[assembly: Xamarin.Forms.ExportRenderer (typeof (OpenTokForms.OpenTokView), typeof (OpenTokForms.iOS.OpenTokViewRenderer))]
 namespace OpenTokForms.iOS
 {
 	public class OpenTokViewRenderer : Xamarin.Forms.Platform.iOS.ViewRenderer
@@ -50,8 +52,7 @@ namespace OpenTokForms.iOS
 			_publisher.View.Layer.CornerRadius = 50;
 			_publisher.View.Layer.MasksToBounds = true;
 
-			//Xamarin.Forms.View view = _publisher.View as Xamarin.Forms.View;
-			//_openTokView.PublisherViewContainer.Children.Add(view);
+			this.ViewController.View.AddSubview (_publisher.View);
 		}
 
 		private void DoSubscribe(OTStream stream)
@@ -181,13 +182,8 @@ namespace OpenTokForms.iOS
 
 			public override void DidConnectToStream(OTSubscriber subscriber)
 			{
-				//Xamarin.Forms.View view = _subscriber.View as Xamarin.Forms.View;
-				//_openTokView.SubscriberViewContainer.Children.Add(view);
-
-				/*
-				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.View.Frame.Width, (float)_this.View.Frame.Height);
-				_openTokView.SubscriberViewContainer.Children.Add (_subscriber.View);
-				*/
+				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.Frame.Width, (float)_this.Frame.Height);
+				_this.ViewController.View.AddSubview(_this._subscriber.View);
 			}
 
 			public override void DidFailWithError(OTSubscriber subscriber, OTError error)
