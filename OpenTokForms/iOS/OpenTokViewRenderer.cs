@@ -25,7 +25,8 @@ namespace OpenTokForms.iOS
 			base.OnElementChanged (e);
 
 			_openTokView = e.NewElement as OpenTokView;
-			OTView = new UIView (new RectangleF (0, 0, -1, 600));
+			var height = (float)(UIScreen.MainScreen.Bounds.Size.Height - 20);
+			OTView = new UIView (new RectangleF (0, 0, 1, height));
 
 			SetNativeControl (OTView);
 
