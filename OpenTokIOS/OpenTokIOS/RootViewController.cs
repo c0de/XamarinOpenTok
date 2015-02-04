@@ -16,6 +16,10 @@ namespace OpenTokIOS
 		OTPublisher _publisher;
 		OTSubscriber _subscriber;
 
+		SessionDelegate _sesionDelegate;
+		PublisherDelegate _publisherDelegate;
+		SubscriberDelegate _subscriberDelegate;
+
 		static readonly float widgetHeight = 240;
 		static readonly float widgetWidth = 320;
 
@@ -36,15 +40,17 @@ namespace OpenTokIOS
 		{
 			OTError error;
 
+			_sesionDelegate = new SessionDelegate (this);
 			_session = new OTSession(Configuration.Config.API_KEY,
 				Configuration.Config.SESSION_ID,
-				new SessionDelegate(this));
+				_sesionDelegate);
 			_session.ConnectWithToken (Configuration.Config.TOKEN, out error);
 		}
 
 		public void DoPublish()
 		{
-			_publisher = new OTPublisher(new PublisherDelegate(this));
+			_publisherDelegate = new PublisherDelegate (this);
+			_publisher = new OTPublisher(_publisherDelegate);
 
 			OTError error;
 
@@ -65,7 +71,8 @@ namespace OpenTokIOS
 
 		private void DoSubscribe(OTStream stream)
 		{
-			_subscriber = new OTSubscriber(stream, new SubscriberDelegate(this));
+			_subscriberDelegate = new SubscriberDelegate (this);
+			_subscriber = new OTSubscriber(stream, _subscriberDelegate);
 
 			OTError error;
 
@@ -85,9 +92,14 @@ namespace OpenTokIOS
 				_subscriber.Delegate = null;
 				_subscriber.Dispose();
 				_subscriber = null;
+				_subscriberDelegate = null;
 			}
 		}
 
+		// Beware the SDK publisher and subscriber is not inmediatly destroyed after called
+		// Session's disconnect so it is not safe to call this method right after disconnect.
+		// You should wait until publisher/subscriber delegate "*destroyed" method is called to
+		// dispose de references.
 		private void CleanupPublisher()
 		{
 			if (_publisher != null)
@@ -96,6 +108,7 @@ namespace OpenTokIOS
 				_publisher.Delegate = null;
 				_publisher.Dispose();
 				_publisher = null;
+				_publisherDelegate = null;
 			}
 		}
 
@@ -132,11 +145,12 @@ namespace OpenTokIOS
 				_this = This;
 			}
 
+			// Although SDK callbacks are called in the main thread,
+			// it might be safer to ensure that other method are called in the Main Thread.
 			public override void DidConnect(OTSession session)
 			{
 				Debug.WriteLine("SessionDelegate:DidConnect: " + session.SessionId);
-
-				_this.DoPublish();
+				InvokeOnMainThread (_this.DoPublish);
 			}
 
 			public override void DidFailWithError(OTSession session, OTError error)
@@ -164,7 +178,7 @@ namespace OpenTokIOS
 			{
 				Debug.WriteLine("SessionDelegate:ConnectionDestroyed: " + connection.ConnectionId);
 
-				_this.CleanupSubscriber();
+				InvokeOnMainThread (() => _this.CleanupSubscriber());
 			}
 
 			public override void StreamCreated(OTSession session, OTStream stream)
@@ -173,7 +187,7 @@ namespace OpenTokIOS
 
 				if(_this._subscriber == null)
 				{
-					_this.DoSubscribe(stream);
+					InvokeOnMainThread (() => _this.DoSubscribe (stream));
 				}
 			}
 
@@ -181,7 +195,7 @@ namespace OpenTokIOS
 			{
 				Debug.WriteLine("SessionDelegate:StreamDestroyed: " + stream.StreamId);
 
-				_this.CleanupSubscriber();
+				InvokeOnMainThread (_this.CleanupSubscriber);
 			}
 		}
 
@@ -200,8 +214,10 @@ namespace OpenTokIOS
 
 			public override void DidConnectToStream(OTSubscriber subscriber)
 			{
-				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.View.Frame.Width, (float)_this.View.Frame.Height);
-				_this.SubscriberView.AddSubview(_this._subscriber.View);
+				InvokeOnMainThread (() => {
+					_this._subscriber.View.Frame = new RectangleF (0, 0, (float)_this.View.Frame.Width, (float)_this.View.Frame.Height);
+					_this.SubscriberView.AddSubview (_this._subscriber.View);
+				});
 			}
 
 			public override void DidFailWithError(OTSubscriber subscriber, OTError error)
@@ -229,7 +245,7 @@ namespace OpenTokIOS
 				var msg = String.Format("PublisherDelegate:DidFailWithError: Error: {0}", error.Description);
 
 				_this.RaiseOnError(msg);
-				_this.CleanupPublisher();
+				InvokeOnMainThread(_this.CleanupPublisher);
 			}
 
 
@@ -237,14 +253,16 @@ namespace OpenTokIOS
 			{
 				if (_this._subscriber == null)
 				{
-					_this.DoSubscribe(stream);
+					InvokeOnMainThread(() => _this.DoSubscribe(stream));
 				}
 			}
 
 			public override void StreamDestroyed(OTPublisher publisher, OTStream stream)
 			{
-				_this.CleanupSubscriber();
-				_this.CleanupPublisher();
+				InvokeOnMainThread (() => {
+					_this.CleanupSubscriber ();
+					_this.CleanupPublisher ();
+				});
 			}
 		}
 
