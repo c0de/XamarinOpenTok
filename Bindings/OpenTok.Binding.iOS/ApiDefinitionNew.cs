@@ -101,7 +101,7 @@ namespace OpenTok.Binding.Ios
 
 		// -(void)signalWithType:(NSString *)type string:(NSString *)string connection:(OTConnection *)connection error:(OTError **)error;
 		[Export ("signalWithType:string:connection:error:")]
-		void SignalWithType (string type, string stringParam, OTConnection connection, out OTError error);
+		void SignalWithType (string type, string stringParam, [NullAllowed] OTConnection connection, out OTError error);
 	}
 
 	// @protocol OTSessionDelegate <NSObject>

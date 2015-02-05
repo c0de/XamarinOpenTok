@@ -7,6 +7,9 @@ using Configuration;
 using System.Diagnostics;
 using System.Drawing;
 using System.Dynamic;
+using System.Threading.Tasks;
+using System.Threading;
+using CoreFoundation;
 
 namespace OpenTokIOS
 {
@@ -67,6 +70,22 @@ namespace OpenTokIOS
 			_publisher.View.Layer.MasksToBounds = true;
 
 			this.PublisherView.AddSubview (_publisher.View);
+
+			// Schedule a periodic task to send a broadcast signal to all
+			// peers on the session
+			Task.Run (() => {
+				while(true) {
+					InvokeOnMainThread( () => {
+						OTError signalerror;
+						_session.SignalWithType("BroadcastSignal", 
+							DateTime.Now.ToString(), 
+							null, // This is the connection of the peer you are sending the signal
+								  // Leave it null and it will send to all members of the session.
+							out signalerror);
+					});
+					Thread.Sleep(10000);
+				}
+			});
 		}
 
 		private void DoSubscribe(OTStream stream)
@@ -197,6 +216,12 @@ namespace OpenTokIOS
 
 				InvokeOnMainThread (_this.CleanupSubscriber);
 			}
+
+			public override void ReceivedSignalType(OTSession session, string type, 
+				OTConnection connection, string stringParam)
+			{
+				Console.WriteLine ("Signal Received: {0}, {1}", type, stringParam);
+			}
 		}
 
 		#endregion SessionDelegate
@@ -217,6 +242,14 @@ namespace OpenTokIOS
 				InvokeOnMainThread (() => {
 					_this._subscriber.View.Frame = new RectangleF (0, 0, (float)_this.View.Frame.Width, (float)_this.View.Frame.Height);
 					_this.SubscriberView.AddSubview (_this._subscriber.View);
+
+					// In this case, we are sending a signal to a specific peer
+					// using its connection as the connection parameter.
+					OTError error;
+					_this._session.SignalWithType("PrivateSignal",
+						"Hello Subscriber",
+						subscriber.Stream.Connection,
+						out error);
 				});
 			}
 
