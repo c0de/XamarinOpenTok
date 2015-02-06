@@ -12,23 +12,24 @@ namespace OpenTokForms.iOS
 {
 	public class OpenTokViewRenderer : Xamarin.Forms.Platform.iOS.ViewRenderer
 	{
-		private OpenTokForms.OpenTokView _openTokView;
+		SessionDelegate _sessionDelegate;
+		PublisherDelegate _publisherDelegate;
+		SubscriberDelegate _subscriberDelegate;
+
 		OTSession _session;
 		OTPublisher _publisher;
 		OTSubscriber _subscriber;
 
-		public UIView OTView;
 		public EventHandler<OnErrorEventArgs> OnError;
 
 		protected override void OnElementChanged (Xamarin.Forms.Platform.iOS.ElementChangedEventArgs<Xamarin.Forms.View> e)
 		{
 			base.OnElementChanged (e);
 
-			_openTokView = e.NewElement as OpenTokView;
-			var height = (float)(UIScreen.MainScreen.Bounds.Size.Height - 20);
-			OTView = new UIView (new RectangleF (0, 0, 1, height));
-
-			SetNativeControl (OTView);
+			var width = (float)UIScreen.MainScreen.Bounds.Size.Width;
+			var height = (float)UIScreen.MainScreen.Bounds.Size.Height - 20;
+			var view = new UIView (new RectangleF (0, 0, width, height));
+			this.SetNativeControl (view);
 
 			DoConnect();
 		}
@@ -37,13 +38,15 @@ namespace OpenTokForms.iOS
 		{
 			OTError error;
 
-			_session = new OTSession(Configuration.Config.API_KEY, Configuration.Config.SESSION_ID, new SessionDelegate(this));
+			_sessionDelegate = new SessionDelegate (this);
+			_session = new OTSession(Configuration.Config.API_KEY, Configuration.Config.SESSION_ID, _sessionDelegate);
 			_session.ConnectWithToken (Configuration.Config.TOKEN, out error);
 		}
 
 		public void DoPublish()
 		{
-			_publisher = new OTPublisher(new PublisherDelegate(this));
+			var _publisherDelegate = new PublisherDelegate (this);
+			_publisher = new OTPublisher(_publisherDelegate);
 
 			OTError error;
 
@@ -54,25 +57,27 @@ namespace OpenTokForms.iOS
 				this.RaiseOnError(error.Description);
 			}
 
-			// Show the Video in the View In Round Mode
-			_publisher.View.Frame = new RectangleF(0, 0, 100, 100);
-			_publisher.View.Layer.CornerRadius = 50;
-			_publisher.View.Layer.MasksToBounds = true;
+			var pubView = _publisher.View;
+			pubView.TranslatesAutoresizingMaskIntoConstraints = false;
+			pubView.Frame = new RectangleF(0, 0, 100, 100);
+			pubView.Layer.CornerRadius = 50;
+			pubView.Layer.MasksToBounds = true;
 
-			OTView.AddSubview (_publisher.View);
+			this.AddSubview (pubView);
+			this.BringSubviewToFront (pubView);
 
-			_publisher.View.TranslatesAutoresizingMaskIntoConstraints = false;
-			OTView.AddConstraints (new NSLayoutConstraint[] {
-				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, OTView, NSLayoutAttribute.Bottom, 1f, 0),
-				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Right, NSLayoutRelation.Equal, OTView, NSLayoutAttribute.Right, 1f, 0),
-				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Height, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, 100),
-				NSLayoutConstraint.Create (_publisher.View, NSLayoutAttribute.Width, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, 100)
+			this.AddConstraints (new NSLayoutConstraint[] {
+				NSLayoutConstraint.Create (pubView, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, this, NSLayoutAttribute.Bottom, 1f, 0),
+				NSLayoutConstraint.Create (pubView, NSLayoutAttribute.Right, NSLayoutRelation.Equal, this, NSLayoutAttribute.Right, 1f, 0),
+				NSLayoutConstraint.Create (pubView, NSLayoutAttribute.Height, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, pubView.Frame.Height),
+				NSLayoutConstraint.Create (pubView, NSLayoutAttribute.Width, NSLayoutRelation.Equal, null, NSLayoutAttribute.NoAttribute, 1f, pubView.Frame.Width)
 			});
 		}
 
 		private void DoSubscribe(OTStream stream)
 		{
-			_subscriber = new OTSubscriber(stream, new SubscriberDelegate(this));
+			_subscriberDelegate = new SubscriberDelegate (this);
+			_subscriber = new OTSubscriber(stream, _subscriberDelegate);
 
 			OTError error;
 
@@ -92,6 +97,7 @@ namespace OpenTokForms.iOS
 				_subscriber.Delegate = null;
 				_subscriber.Dispose();
 				_subscriber = null;
+				_subscriberDelegate = null;
 			}
 		}
 
@@ -103,6 +109,7 @@ namespace OpenTokForms.iOS
 				_publisher.Delegate = null;
 				_publisher.Dispose();
 				_publisher = null;
+				_publisherDelegate = null;
 			}
 		}
 
@@ -141,13 +148,12 @@ namespace OpenTokForms.iOS
 
 			public override void DidConnect(OTSession session)
 			{
-				_this.DoPublish();
+				InvokeOnMainThread (_this.DoPublish);
 			}
 
 			public override void DidFailWithError(OTSession session, OTError error)
 			{
 				var msg = "SessionDelegate:DidFailWithError: " + session.SessionId;
-
 				_this.RaiseOnError(msg);
 			}
 
@@ -163,9 +169,7 @@ namespace OpenTokForms.iOS
 
 			public override void ConnectionDestroyed(OTSession session, OTConnection connection)
 			{
-				// connection destroyed
-
-				_this.CleanupSubscriber();
+				InvokeOnMainThread (() => _this.CleanupSubscriber());
 			}
 
 			public override void StreamCreated(OTSession session, OTStream stream)
@@ -197,10 +201,21 @@ namespace OpenTokForms.iOS
 
 			public override void DidConnectToStream(OTSubscriber subscriber)
 			{
-				_this._subscriber.View.Frame = new RectangleF(0, 0, (float)_this.OTView.Frame.Width, (float)_this.OTView.Frame.Height);
-				_this._subscriber.View.AutoresizingMask = UIViewAutoresizing.FlexibleHeight | UIViewAutoresizing.FlexibleWidth;
-				_this.OTView.AddSubview(_this._subscriber.View);
-				_this.OTView.BringSubviewToFront (_this._publisher.View);
+				InvokeOnMainThread (() => {
+					var subView = _this._subscriber.View;
+					subView.Frame = new RectangleF (0, 0, 1, 1);
+
+					_this.AddSubview (subView);
+					subView.TranslatesAutoresizingMaskIntoConstraints = false;
+					_this.AddConstraints(new NSLayoutConstraint[] {
+						NSLayoutConstraint.Create(subView, NSLayoutAttribute.Top, NSLayoutRelation.Equal, _this, NSLayoutAttribute.Top, 1, 0),
+						NSLayoutConstraint.Create(subView, NSLayoutAttribute.Bottom, NSLayoutRelation.Equal, _this, NSLayoutAttribute.Bottom, 1, 0),
+						NSLayoutConstraint.Create(subView, NSLayoutAttribute.Leading, NSLayoutRelation.Equal, _this, NSLayoutAttribute.Leading, 1, 0),
+						NSLayoutConstraint.Create(subView, NSLayoutAttribute.Trailing, NSLayoutRelation.Equal, _this, NSLayoutAttribute.Trailing, 1, 0)
+					});
+					_this.BringSubviewToFront (subView);
+					_this.BringSubviewToFront(_this._publisher.View);
+				});
 			}
 
 			public override void DidFailWithError(OTSubscriber subscriber, OTError error)
@@ -234,16 +249,18 @@ namespace OpenTokForms.iOS
 
 			public override void StreamCreated(OTPublisher publisher, OTStream stream)
 			{
-				if (_this._subscriber == null)
+				if(_this._subscriber == null)
 				{
-					_this.DoSubscribe(stream);
+					InvokeOnMainThread (() => _this.DoSubscribe (stream));
 				}
 			}
 
 			public override void StreamDestroyed(OTPublisher publisher, OTStream stream)
 			{
-				_this.CleanupSubscriber();
-				_this.CleanupPublisher();
+				InvokeOnMainThread (() => {
+					_this.CleanupSubscriber();
+					_this.CleanupPublisher();
+				});
 			}
 		}
 
