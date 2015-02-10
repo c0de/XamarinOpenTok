@@ -26,6 +26,9 @@ namespace OpenTokForms.iOS
 		{
 			base.OnElementChanged (e);
 
+			if (e.NewElement == null)
+				return;
+
 			var width = (float)UIScreen.MainScreen.Bounds.Size.Width;
 			var height = (float)UIScreen.MainScreen.Bounds.Size.Height - 20;
 			var view = new UIView (new RectangleF (0, 0, width, height));
@@ -148,7 +151,8 @@ namespace OpenTokForms.iOS
 
 			public override void DidConnect(OTSession session)
 			{
-				InvokeOnMainThread (_this.DoPublish);
+				//InvokeOnMainThread (_this.DoPublish);
+				_this.DoPublish ();
 			}
 
 			public override void DidFailWithError(OTSession session, OTError error)
@@ -169,7 +173,8 @@ namespace OpenTokForms.iOS
 
 			public override void ConnectionDestroyed(OTSession session, OTConnection connection)
 			{
-				InvokeOnMainThread (() => _this.CleanupSubscriber());
+				//InvokeOnMainThread (() => _this.CleanupSubscriber());
+				_this.CleanupSubscriber ();
 			}
 
 			public override void StreamCreated(OTSession session, OTStream stream)
@@ -251,16 +256,17 @@ namespace OpenTokForms.iOS
 			{
 				if(_this._subscriber == null)
 				{
-					InvokeOnMainThread (() => _this.DoSubscribe (stream));
+					//InvokeOnMainThread (() => _this.DoSubscribe (stream));
+					_this.DoSubscribe (stream);
 				}
 			}
 
 			public override void StreamDestroyed(OTPublisher publisher, OTStream stream)
 			{
-				InvokeOnMainThread (() => {
+				//InvokeOnMainThread (() => {
 					_this.CleanupSubscriber();
 					_this.CleanupPublisher();
-				});
+				//});
 			}
 		}
 

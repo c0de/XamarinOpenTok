@@ -38,22 +38,22 @@
     <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OpenTok.linkwith.cs">
-      <DependentUpon>OpenTok.a</DependentUpon>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
     <ObjcBindingCoreSource Include="StructsAndEnums.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.iOS.ObjCBinding.CSharp.targets" />
-  <ItemGroup>
-    <ObjcBindingNativeLibrary Include="OpenTok.a" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="Properties\AssemblyInfo.cs" />
     <None Include="ApiDefinition.cs" />
   </ItemGroup>
   <ItemGroup>
     <ObjcBindingApiDefinition Include="ApiDefinitionNew.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ObjcBindingNativeLibrary Include="OpenTok.a" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="OpenTok.linkwith.cs">
+      <DependentUpon>OpenTok.a</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
