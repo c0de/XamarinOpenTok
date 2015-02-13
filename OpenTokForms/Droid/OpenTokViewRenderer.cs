@@ -66,6 +66,7 @@ namespace OpenTokForms.Droid
 			layoutParams.BottomMargin = DpToPx(8);
 			layoutParams.RightMargin = DpToPx(8);
 			_layout.AddView(_publisher.View, layoutParams);
+			_publisher.View.BringToFront ();
 		}
 
 		private void UnsubscribeFromStream(Stream stream) {
